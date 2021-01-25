@@ -1,35 +1,8 @@
-# luagd -- gd bindings for the Lua Programming Language.
-# (c) 2004-11 Alexandre Erwin Ittner <alexandre@ittner.com.br>
-#
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-# IN NO EVENT SHALL THE AUTHOR OR COPYRIGHT HOLDER BE LIABLE FOR ANY
-# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-# If you use this package in a product, an acknowledgment in the product
-# documentation would be greatly appreciated (but it is not required).
-#
 
-
-# Lua-GD version. This one must be set.
 VERSION=2.0.33r3
 
 # Command used to run Lua code
-LUABIN=lua5.1
+LUABIN=/usr/local/Cellar/openresty/1.19.3.1_1/luajit/bin/luajit
 
 # Optimization for the brave of heart ;)
 OMITFP=-fomit-frame-pointer
@@ -45,57 +18,17 @@ LUAPKG=lua5.1
 OUTFILE=gd.so
 
 CFLAGS=-O3 -Wall -fPIC $(OMITFP)
-CFLAGS+=`pkg-config $(LUAPKG) --cflags`
 CFLAGS+=-DVERSION=\"$(VERSION)\"
 
 GDFEATURES=-DGD_XPM -DGD_JPEG -DGD_FONTCONFIG -DGD_FREETYPE -DGD_PNG -DGD_GIF
-LFLAGS=-shared `pkg-config $(LUAPKG) --libs` -lgd
+LFLAGS=-shared -I/usr/local/Cellar/openresty/1.19.3.1_1/luajit/include/luajit-2.1
 
 INSTALL_PATH := `pkg-config $(LUAPKG) --variable=INSTALL_CMOD`
 
 
-# ---------------------------------------------------------------------------
-# Manual configuration for systems without pkgconfig.
-# WARNING: These instructions will only work on older versions of GD, since
-# gdlib-config has been removed in favor of pkg-config.
+all:
+	gcc -o luagd.so -c $(GDFEATURES) -shared -I/usr/local/Cellar/openresty/1.19.3.1_1/luajit/include/luajit-2.1 -lgd -dynamiclib -undefined dynamic_lookup luagd.c $(CFLAGS)
 
-# Path to the utility 'gdlib-config'. This may be changed to compile the
-# module with development versions of libgd.
-#GDLIBCONFIG=gdlib-config
-
-#OUTFILE=gd.so
-#CFLAGS=-O3 -Wall -fPIC $(OMITFP)
-#CFLAGS+=`$(GDLIBCONFIG) --cflags` -I/usr/include/lua5.1
-#CFLAGS+=-DVERSION=\"$(VERSION)\"
-#GDFEATURES=`$(GDLIBCONFIG) --features |sed -e "s/GD_/-DGD_/g"`
-#LFLAGS=-shared `$(GDLIBCONFIG) --ldflags` `$(GDLIBCONFIG) --libs` -lgd
-#INSTALL_PATH=/usr/lib/lua/
-
-
-# ---------------------------------------------------------------------------
-# Manual configuration for Windows and systems without sed, pkgconfig, etc.
-# Uncomment, change and good luck :)
-
-#OUTFILE=gd.dll
-#CFLAGS=-O3 -Wall -fPIC $(OMITFP)
-#CFLAGS+=-IC:/lua5.1/
-#CFLAGS+=-DVERSION=\"$(VERSION)\"
-#GDFEATURES=-DGD_XPM -DGD_JPEG -DGD_FONTCONFIG -DGD_FREETYPE -DGD_PNG -DGD_GIF
-#LFLAGS=-shared -lgd2 -lm $(OMITFP)
-#INSTALL_PATH="C:/Program Files/lua/"
-# ---------------------------------------------------------------------------
-
-
-all: test
-
-$(OUTFILE): gd.lo
-	$(CC) -o $(OUTFILE) gd.lo $(LFLAGS)
-
-test: $(OUTFILE)
-	$(LUABIN) test_features.lua
-
-gd.lo: luagd.c
-	$(CC) -o gd.lo -c $(GDFEATURES) $(CFLAGS) luagd.c
 
 install: $(OUTFILE)
 	install -D -s $(OUTFILE) $(DESTDIR)/$(INSTALL_PATH)/$(OUTFILE)

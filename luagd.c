@@ -25,9 +25,10 @@
  * documentation would be greatly appreciated (but it is not required).
  *
  */
- 
+
 #include <lua.h>
 #include <lauxlib.h>
+#include <lualib.h>
 #include <stdlib.h>
 
 #include <gd.h>
@@ -2168,8 +2169,10 @@ static const luaL_Reg LgdFunctions[] =
     { "createFromGif",          LgdImageCreateFromGif },
     { "createFromGifStr",       LgdImageCreateFromGifPtr },
 #endif
+#ifdef GD_PNG
     { "createFromPng",          LgdImageCreateFromPng },
     { "createFromPngStr",       LgdImageCreateFromPngPtr },
+#endif
     { "createFromGd",           LgdImageCreateFromGd },
     { "createFromGdStr",        LgdImageCreateFromGdPtr },
     { "createFromGd2",          LgdImageCreateFromGd2 },
@@ -2300,7 +2303,7 @@ static const luaL_Reg LgdMetatable[] =
 };
 
 
-int luaopen_gd(lua_State *L) {
+int luaopen_mymod(lua_State *L) {
     lua_newtable(L);
     luaL_setfuncs(L, LgdFunctions, 0);
 
