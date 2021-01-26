@@ -1,1 +1,1 @@
-gcc -Wall -shared -fPIC -Werror -DNDEBUG -O2 luagd.c -o mymod.so -I/usr/local/Cellar/openresty/1.19.3.1_1/luajit/include/luajit-2.1 -I/usr/local/opt/openssl@1.1/include -lgd -lm -dynamiclib -undefined dynamic_lookup  -fomit-frame-pointer -DVERSION=\"2.0.33r3\"  -DGD_XPM -DGD_JPEG -DGD_FONTCONFIG -DGD_FREETYPE -DGD_PNG -DGD_GIF
+gcc -Wall  -shared -fPIC -Werror -DNDEBUG -O2 luagd.c -o gd.so -I/usr/local/Cellar/openresty/1.19.3.1_1/luajit/include/luajit-2.1 -I/usr/local/opt/openssl@1.1/include -lgd -lm -dynamiclib -undefined dynamic_lookup

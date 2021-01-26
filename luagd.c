@@ -1,31 +1,3 @@
-/*
- * luagd -- GD bindings for Lua.
- * (c) 2004-13 Alexandre Erwin Ittner <alexandre@ittner.com.br>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHOR OR COPYRIGHT HOLDER BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * If you use this package in a product, an acknowledgment in the product
- * documentation would be greatly appreciated (but it is not required).
- *
- */
-
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -40,16 +12,9 @@
 #include <gdfontg.h>
 #include <gdfontt.h>
 
-#ifndef VERSION
- #error "Trying to build without -DVERSION=xxx defined. Check the Makefile"
-#endif
-#define LIB_VERSION     "lua-gd " VERSION
-#define LIB_COPYRIGHT   LIB_VERSION " (c) 2004-13 Alexandre Erwin Ittner"
-
 #define GD_IMAGE_PTR_TYPENAME   "gdImagePtr_handle"
 
-
-/* Compatibility between Lua 5.1 and Lua 5.2 */
+//lua 5.1 和5.2兼容
 #if LUA_VERSION_NUM < 501
  #error "Unsuported Lua version. You must use Lua >= 5.1"
 #endif
@@ -136,24 +101,6 @@ static gdFontPtr getStdFont(lua_State *L, int i) {
 }
 
 
-
-
-/* 
- * Reads a Lua table and returns a pointer to a "gdFTStringExtra" struct. The
- * table should have the following fields:
- *
- * {
- *     linespacing = 1.0,                   -- linespacing for '\n'
- *     charmap = gd.FTEX_Unicode,           -- default charset
- *     hdpi = 96,                           -- horizontal resolution
- *     vdpi = 96,                           -- vertical resolution
- *     disable_kerning = true,              -- disable kerning?
- *     xshow = true,                        -- return char positions?
- *     return_font_path_name = true,        -- return font path names?
- *     fontconfig = true                    -- use fontconfig?
- * }
- * 
- */
 #ifdef GD_FREETYPE
 static gdFTStringExtra *getFTStringExtraPtr(lua_State *L, int i) {
     luaL_checktype(L, i, LUA_TTABLE);
@@ -239,7 +186,6 @@ static gdFTStringExtra *getFTStringExtraPtr(lua_State *L, int i) {
 #endif 
 
 
-/* gdImageCreate(int sx, int sy) */
 static int LgdImageCreate(lua_State *L) {
     int sx, sy;
     gdImagePtr im;
@@ -254,8 +200,6 @@ static int LgdImageCreate(lua_State *L) {
     return 1;
 }
 
-/* gdImageCreatePalette(int sx, int sy) */
-/* Useless? */
 static int LgdImageCreatePalette(lua_State *L) {
     int sx, sy;
     gdImagePtr im;
@@ -272,7 +216,7 @@ static int LgdImageCreatePalette(lua_State *L) {
 
 
 
-/* gdImageCreateTrueColor(int sx, int sy) */
+
 static int LgdImageCreateTrueColor(lua_State *L) {
     int sx, sy;
     gdImagePtr im;
@@ -287,8 +231,6 @@ static int LgdImageCreateTrueColor(lua_State *L) {
     return 1;
 }
 
-/* gdImagePtr gdImageCreatePaletteFromTrueColor(gdImagePtr im, int ditherFlag,
-    int colorsWanted) */
 static int LgdImageCreatePaletteFromTrueColor(lua_State *L) {
     gdImagePtr im = getImagePtr(L, 1);
     int dither = lua_toboolean(L, 2);
@@ -303,8 +245,6 @@ static int LgdImageCreatePaletteFromTrueColor(lua_State *L) {
 }
 
 
-/* void gdImageTrueColorToPalette(gdImagePtr im, int ditherFlag,
-    int colorsWanted) */
 static int LgdImageTrueColorToPalette(lua_State *L) {
     gdImagePtr im = getImagePtr(L, 1);
     int dither = lua_toboolean(L, 2);
@@ -316,7 +256,6 @@ static int LgdImageTrueColorToPalette(lua_State *L) {
 
 
 
-/* gdImageDestroy(gdImagePtr im) */
 static int LgdImageDestroy(lua_State *L) {
     gdImagePtr im = getImagePtr(L, 1);
     if (im)
@@ -2303,18 +2242,9 @@ static const luaL_Reg LgdMetatable[] =
 };
 
 
-int luaopen_mymod(lua_State *L) {
+int luaopen_gd(lua_State *L) {
     lua_newtable(L);
     luaL_setfuncs(L, LgdFunctions, 0);
-
-    lua_pushliteral(L, "VERSION");
-    lua_pushstring(L, LIB_VERSION);
-    lua_settable(L, -3);
-
-    lua_pushliteral(L, "COPYRIGHT");
-    lua_pushstring(L, LIB_COPYRIGHT);
-    lua_settable(L, -3);
-    
     tblseticons(L, "MAX_COLORS", gdMaxColors);
     tblseticons(L, "GD2_FMT_RAW", GD2_FMT_RAW);
     tblseticons(L, "GD2_FMT_COMPRESSED", GD2_FMT_COMPRESSED);

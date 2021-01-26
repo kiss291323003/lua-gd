@@ -1,6 +1,6 @@
-local gd = require("mymod")
-
--- function enabled(res, desc)
+local gd = require("my")
+gd:doIt();
+-- local function enabled(res, desc)
 --   local str = "    " .. desc .. " "
 --   str = str .. string.rep(".", 37 - string.len(str))
 --   if res then
@@ -10,9 +10,7 @@ local gd = require("mymod")
 --   end
 -- end
 --
--- print("Lua-GD version: " .. gd.VERSION)
 -- print("Lua-GD features:")
---
 -- enabled(gd.png, "PNG support")
 -- enabled(gd.gif, "GIF support")
 -- enabled(gd.jpeg, "JPEG support")
